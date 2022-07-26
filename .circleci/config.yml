@@ -166,7 +166,7 @@ jobs:
             echo $(aws ec2 describe-instances \
             --filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend=${CIRCLE_WORKFLOW_ID:0:7} \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --output text) >> ~/cdond-c3-projectstarter/.circleci/ansible/inventory.txt
+            --output text) >> ~/project/.circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
@@ -331,8 +331,8 @@ jobs:
 workflows:
   default:
     jobs:
-      # - build-frontend
-      # - build-backend
+      - build-frontend
+      - build-backend
       # - test-frontend:
       #     requires: [build-frontend]
       # - test-backend:
