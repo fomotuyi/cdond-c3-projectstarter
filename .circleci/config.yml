@@ -188,7 +188,7 @@ jobs:
           command: |
             apk add --update --no-cache ansible tar gzip aws-cli
       - attach_workspace:
-          at: ~/
+          at: ~/inventory.txt
       - run:
           name: Configure server
           command: |
