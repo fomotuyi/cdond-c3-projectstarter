@@ -278,6 +278,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprint: ["c1:26:a7:59:27:fe:61:d7:07:89:01:f2:ff:af:dc:93"]
+      - run:
           name: Install dependencies
           command: |
             apk add --update tar gzip nodejs npm curl ansible rsync openssh
@@ -285,8 +286,6 @@ jobs:
             aws --version
       - attach_workspace:
           at: ~/
-      - restore_cache:
-          keys: [backend-build]
       - run:
           name: Deploy backend
           command: |
