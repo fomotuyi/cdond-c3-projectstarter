@@ -248,7 +248,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND-IP=$(aws ec2 describe-instances \
+            export BACKEND_IP=$(aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
             --output text)
@@ -280,7 +280,9 @@ jobs:
           fingerprint: ["c1:26:a7:59:27:fe:61:d7:07:89:01:f2:ff:af:dc:93"]
           name: Install dependencies
           command: |
-            apk add --update --no-cache tar gzip nodejs npm curl aws-cli ansible rsync openssh
+            apk add --update tar gzip nodejs npm curl ansible rsync openssh
+            pip install awscli
+            aws --version
       - attach_workspace:
           at: ~/
       - restore_cache:
@@ -294,8 +296,6 @@ jobs:
             cd ..
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
-            mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
-            mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
