@@ -203,22 +203,21 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Install AWS CLI dependencies
           command: |
-            sudo apt-get update && sudo apt-get install -yy less
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-      - restore_cache:
-          keys: [backend-build]
+            aws --version
+      
       - run:
           name: Run migrations
           command: |
             cd backend
             npm install
-            npm audit fix --audit-level=critical --force
-            npm audit fix --audit-level=critical --force
             npm run build
             npm run migrations >> migrations.txt
       - run:
@@ -233,7 +232,9 @@ jobs:
              fi
      # Here's where you will add some code to rollback on failure  
       - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}     
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}  
+      - revert-migrations:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"   
     
 
   deploy-frontend:
