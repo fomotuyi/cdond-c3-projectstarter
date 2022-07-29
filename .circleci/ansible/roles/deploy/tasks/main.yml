@@ -22,8 +22,8 @@
 - name: extract artifact
   become: yes
   unarchive:
-    src: files/artifact.tar.gz
-    dest: . 
+    src: ~/project/artifact.tar.gz
+    dest: /home/ubuntu
 - name: start app
   become: yes
   shell: |
