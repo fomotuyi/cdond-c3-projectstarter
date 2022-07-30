@@ -25,8 +25,11 @@
     production: yes
     state: latest
 
+- name: "Install Packages"
+  command:
+    cmd: npm install    
+
 - name: start app
   become: yes
   command: |
-    pm2 stop default
     pm2 start npm -- start
