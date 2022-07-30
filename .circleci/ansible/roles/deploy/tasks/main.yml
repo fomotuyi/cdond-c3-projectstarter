@@ -3,7 +3,7 @@
   become: yes
   apt:
     autoremove: yes
-    
+
 - name: extract artifact
   become: yes
   unarchive:
@@ -29,4 +29,4 @@
   become: yes
   command: |
     pm2 stop default
-    pm2 start npm --start
+    pm2 start npm -- start
