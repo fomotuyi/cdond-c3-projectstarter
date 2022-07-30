@@ -4,7 +4,7 @@
     src: ~/project/artifact.tar.gz
     dest: /home/ubuntu
 
--- name: "Install NodeJS"
+- name: "Install NodeJS"
   become: true
   apt:
     name: ["nodejs"]
