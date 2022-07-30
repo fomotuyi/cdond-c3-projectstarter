@@ -3,6 +3,12 @@
   become: yes
   apt:
     autoremove: yes
+    
+- name: extract artifact
+  become: yes
+  unarchive:
+    src: ~/project/artifact.tar.gz
+    dest: /home/ubuntu
 
 - name: "install dependencies."
   become: yes
@@ -19,12 +25,8 @@
     production: yes
     state: latest
 
-- name: extract artifact
-  become: yes
-  unarchive:
-    src: ~/project/artifact.tar.gz
-    dest: /home/ubuntu
 - name: start app
   become: yes
   command: |
+    pm2 stop default
     pm2 start npm --start
