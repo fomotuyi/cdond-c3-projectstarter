@@ -402,7 +402,7 @@ jobs:
           command: |
             if [[ "$CurrentWorkflowID" != "$OldWorkflowID" ]]
             then
-              aws s3 rm "s3://udapeoplefrontend${WorkflowID}" --recursive
+              aws s3 rm "s3://udapeople-${WorkflowID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
               echo "Old Stacks removed completely"
