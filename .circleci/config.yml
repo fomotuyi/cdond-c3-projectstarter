@@ -358,15 +358,27 @@ jobs:
       - run:
           name: Update cloudfront distribution
           command: |
-            aws cloudformation \
+            # aws cloudformation \
+            # list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            # --no-paginate --output text > ~/oldWorkflowId.txt  
+            # cat ~/oldWorkflowId.txt
+            # echo $OldWorkflowID >> ~/OldWorkflowID.txt
+            # aws cloudformation deploy \
+            #   --template-file .circleci/files/cloudfront.yml \
+            #   --stack-name InitialStack \
+            #   --parameter-overrides WorkflowID=udapeople-${CIRCLE_WORKFLOW_ID:0:7} \
+            #   --tags project=udapeople
+            #   echo OldWorkflowID: ${OldWorkflowID}
+            #   echo Current Workflow ID: ${CIRCLE_WORKFLOW_ID:0:7}
+            WorkflowID=$(aws cloudformation \
             list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            --no-paginate --output text > ~/oldWorkflowId.txt  
-            cat ~/oldWorkflowId.txt
-            echo $OldWorkflowID >> ~/OldWorkflowID.txt
+            --no-paginate --output text)
+            curl https://kvdb.io/P2QF3o1evmGBBGk9pLwvZK/oldworkflowid -d "$WorkflowID"
+            echo $WorkflowID
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name InitialStack \
-              --parameter-overrides WorkflowID2=udapeople-${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides WorkflowID=udapeople-${CIRCLE_WORKFLOW_ID:0:7} \
               --tags project=udapeople
               echo OldWorkflowID: ${OldWorkflowID}
               echo Current Workflow ID: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -391,10 +403,18 @@ jobs:
           name: Get old stack workflow id
           command: |
             # your code here
-            export OldWorkflowID=$(aws cloudformation \
-            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            --no-paginate --output text)
-            echo OldWorkflowID: "${OldWorkflowID}"
+            export OldWorkflowID=$(curl -s https://kvdb.io/P2QF3o1evmGBBGk9pLwvZK/oldworkflowid)
+            if [ -z "$OldWorkflowID" ]
+            then
+              echo "\$OldWorkflowID is empty, please make sure Initial Stack exists with output WorkflowID"
+            else
+              echo "Old stack found"
+              echo OldWorkflowID: "${OldWorkflowID:10:17}"
+              echo currentWorkflowID: "${CIRCLE_WORKFLOW_ID:0:7}"
+            # export OldWorkflowID=$(aws cloudformation \
+            # list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            # --no-paginate --output text)
+            # echo OldWorkflowID: "${OldWorkflowID}"
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
                     --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
